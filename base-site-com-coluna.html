@@ -1,0 +1,411 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    flex-direction: column;
+    /* Permite empilhar Header, Corpo e Footer */
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* --- HEADER (CABEÇALHO) --- */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: #ffffff;
+    color: #333333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 120;
+    /* Fica acima de tudo */
+  }
+
+  .header-logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #3498db;
+    margin-left: 55px;
+    /* Abre espaço para o botão do menu */
+  }
+
+  .header-usuario {
+    font-size: 1rem;
+    color: #3498db;
+  }
+
+  /* Botão de Alternar Menu (Hambúrguer) */
+  .btn-menu {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 130;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+  }
+
+  .btn-menu:hover {
+    background-color: #2980b9;
+  }
+
+  /* --- ÁREA CENTRAL (CORPO DA PÁGINA) --- */
+  .container-central {
+    display: flex;
+    /* Alinha Menu Lateral e Conteúdo lado a lado */
+    flex: 1;
+    /* Ocupa todo o espaço vertical disponível sob o header */
+    margin-top: 70px;
+    /* Desce o corpo para não sumir sob o header fixo */
+  }
+
+  /* --- MENU LATERAL (SIDEBAR) --- */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    /* Começa logo abaixo do header */
+    bottom: 0;
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 25px 20px;
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+
+  .sidebar.escondido {
+    transform: translateX(-250px);
+  }
+
+  .sidebar ul {
+    list-style: none;
+  }
+
+  .sidebar ul li {
+    margin-bottom: 12px;
+  }
+
+  .sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 1rem;
+    display: block;
+    padding: 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .sidebar ul li a:hover {
+    background-color: #34495e;
+    color: #3498db;
+  }
+
+  /* --- CONTEÚDO PRINCIPAL --- */
+  .conteudo-principal {
+    flex: 1;
+    margin-left: 250px;
+    /* Dá espaço para a barra fixa no desktop */
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: margin-left 0.3s ease;
+    width: 100%;
+  }
+
+  .conteudo-principal.expandido {
+    margin-left: 0;
+  }
+
+  .conteudo-principal h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  /* --- CONTAINER DO CARROSSEL --- */
+  .carrossel-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px 0;
+  }
+
+  .carrossel-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    padding: 10px;
+    scrollbar-width: none;
+  }
+
+  .carrossel-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- ESTILO DOS CARDS --- */
+  .card-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+
+  .card-slide:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-imagem {
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .card-conteudo {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-conteudo h3 {
+    color: #333;
+  }
+
+  .card-conteudo p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* --- SETAS DO CARROSSEL --- */
+  .seta-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    color: #333;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .seta-nav:hover {
+    background-color: #3498db;
+    color: white;
+  }
+
+  .seta-esquerda {
+    left: -20px;
+  }
+
+  .seta-direita {
+    right: -20px;
+  }
+
+  /* --- FOOTER (RODAPÉ) --- */
+  .footer {
+    background-color: #222222;
+    color: #bbbbbb;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    z-index: 110;
+    position: relative;
+  }
+
+  /* --- RESPONSIVIDADE (MEDIA QUERIES) --- */
+
+  @media (min-width: 768px) {
+    .card-slide {
+      flex: 0 0 calc(50% - 10px);
+      /* 2 cards por vez em tablets */
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .card-slide {
+      flex: 0 0 calc(33.333% - 14px);
+      /* 3 cards por vez em computadores */
+    }
+  }
+
+  @media (max-width: 767px) {
+    .sidebar {
+      top: 70px;
+      transform: translateX(-250px);
+      /* Oculta menu no mobile */
+    }
+
+    .sidebar.aberto-mobile {
+      transform: translateX(0);
+      /* Sobrepõe a tela no mobile */
+    }
+
+    .conteudo-principal {
+      margin-left: 0;
+      padding: 30px 15px;
+    }
+  }
+</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Completo com Header, Sidebar, Carrossel e Footer</title>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Botão de Alternar Menu -->
+  <button class="btn-menu" id="toggle-menu" aria-label="Alternar menu">☰</button>
+
+  <!-- HEADER (CABEÇALHO FIXO) -->
+  <header class="header">
+    <div class="header-logo">Petuboplace</div>
+    <div class="header-usuario">Olá, Garotinho</div>
+  </header>
+
+  <!-- ÁREA CENTRAL (CONTAINER DO CONTEÚDO + SIDEBAR) -->
+  <div class="container-central">
+
+    <!-- MENU LATERAL -->
+    <aside class="sidebar" id="sidebar">
+      <ul>
+        <li><a href="https://www.youtube.com/watch?v=u3be8MfxGZQ&pp=ygURY29iYmxlbW9uIHRyYWlsZXI%3D">Mod de FIFA 26
+            grátis</a></li>
+        <li><a href="https://www.youtube.com/watch?v=TzA-PvMjd3I&pp=ygUPZmVhciBhbmQgaHVudGVy">BAIXE POKÉMON LEGENDS
+            ARCEUS AQUI</a></li>
+        <li><a href="https://www.youtube.com/watch?v=9EiLom_R0Ds&pp=ygUVYmVuaWhpbWUgYmFua2FpIGFuaW1l">Skin do Urahara
+            aqui</a></li>
+        <li><a href="https://www.youtube.com/watch?v=M58XvuZ4Zy8&t=34218s">Livros comunistas grátis</a></li>
+        <li><a href="https://www.youtube.com/watch?v=eBLsPy9RZ1M&pp=ygUKbG9vcGNpbmVtYQ%3D%3D">Ouça o albúm novo do D$
+            Luqi!</a></li>
+      </ul>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="conteudo-principal" id="conteudo">
+
+      <h1>Destaques da Semana</h1>
+
+      <!-- CARROSSEL -->
+      <div class="carrossel-wrapper">
+        <button class="seta-nav seta-esquerda" id="btn-carrossel-esq" aria-label="Slide anterior">&#10094;</button>
+
+        <div class="carrossel-container" id="meu-carrossel">
+
+          <div class="card-slide">
+            <div class="card-imagem" style="background: linear-gradient(135deg, #71b7e6, #9b59b6);">Card 1</div>
+            <div class="card-conteudo">
+              <h3>Produto Alfa</h3>
+              <p>Descrição detalhada dos principais benefícios e características operacionais do produto Alfa.</p>
+            </div>
+          </div>
+
+          <div class="card-slide">
+            <div class="card-imagem" style="background: linear-gradient(135deg, #3498db, #2ecc71);">Card 2</div>
+            <div class="card-conteudo">
+              <h3>Produto Beta</h3>
+              <p>Descrição detalhada dos principais benefícios e características operacionais do produto Beta.</p>
+            </div>
+          </div>
+
+          <div class="card-slide">
+            <div class="card-imagem" style="background: linear-gradient(135deg, #f1c40f, #e67e22);">Card 3</div>
+            <div class="card-conteudo">
+              <h3>Produto Gama</h3>
+              <p>Descrição detalhada dos principais benefícios e características operacionais do produto Gama.</p>
+            </div>
+          </div>
+
+          <div class="card-slide">
+            <div class="card-imagem" style="background: linear-gradient(135deg, #e74c3c, #9b59b6);">Card 4</div>
+            <div class="card-conteudo">
+              <h3>Produto Delta</h3>
+              <p>Descrição detalhada dos principais benefícios e características operacionais do produto Delta.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <button class="seta-nav seta-direita" id="btn-carrossel-dir" aria-label="Próximo slide">&#10095;</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FOOTER (RODAPÉ) -->
+  <footer class="footer">
+    <p>&copy; 2026 MeuPainel Ltda. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    // --- JAVASCRIPT DO MENU LATERAL ---
+    const btnMenu = document.getElementById('toggle-menu');
+    const sidebar = document.getElementById('sidebar');
+    const conteudo = document.getElementById('conteudo');
+
+    btnMenu.addEventListener('click', () => {
+      if (window.innerWidth >= 768) {
+        sidebar.classList.toggle('escondido');
+        conteudo.classList.toggle('expandido');
+      } else {
+        sidebar.classList.toggle('aberto-mobile');
+      }
+    });
+
+    // --- JAVASCRIPT DO CARROSSEL ---
+    const carrossel = document.getElementById('meu-carrossel');
+    const btnEsquerda = document.getElementById('btn-carrossel-esq');
+    const btnDireita = document.getElementById('btn-carrossel-dir');
+
+    function moverCarrossel(direcao) {
+      const larguraVisivel = carrossel.clientWidth;
+    }
+  </script>
